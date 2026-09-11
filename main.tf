@@ -10,12 +10,20 @@ resource "docker_volume" "grafana_data" {
   name = "grafana_data"
 }
 
+resource "docker_volume" "nodeexporter_data" {
+  name = "nodeexporte_data"
+}
+
 resource "docker_image" "prometheus" {
   name = var.prometheus_image
 }
 
 resource "docker_image" "grafana" {
   name = var.grafana_image
+}
+
+resource "docker_image" "nodeexporter" {
+  name = var.nodeexporter_image
 }
 
 resource "docker_container" "prometheus" {
@@ -53,5 +61,24 @@ resource "docker_container" "grafana" {
   volumes {
     volume_name    = docker_volume.grafana_data.name
     container_path = "/var/lib/grafana"
+  }
+}
+
+resource "docker_container" "nodeexporter" {
+  name = "nodeexporter"
+  image = docker_image.nodeexporter.image_id
+
+  ports {
+    internal = 9100
+    external = var.nodeexporter_port
+  }
+
+  networks_advanced {
+    name = docker_network.monitoring.name
+  }
+
+  volumes {
+    volume_name = docker_volume.nodeexporter_data.name
+    container_path = "/metrics"
   }
 }

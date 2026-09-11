@@ -10,5 +10,5 @@ output "grafana_url" {
 
 output "nodeexporter_url" {
   description = "Node Exporter URL"
-  value = "http://localhost:${var.nodeexporter_port}"
+  value       = "http://localhost:${var.nodeexporter_port}"
 }

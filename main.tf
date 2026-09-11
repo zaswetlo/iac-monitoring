@@ -43,6 +43,12 @@ resource "docker_container" "prometheus" {
     volume_name    = docker_volume.prometheus_data.name
     container_path = "/prometheus"
   }
+
+  volumes {
+    host_path      = abspath("${path.module}/prometheus/prometheus.yml")
+    container_path = "/etc/prometheus/prometheus.yml"
+    read_only      = true
+  }
 }
 
 resource "docker_container" "grafana" {
@@ -65,7 +71,7 @@ resource "docker_container" "grafana" {
 }
 
 resource "docker_container" "nodeexporter" {
-  name = "nodeexporter"
+  name  = "nodeexporter"
   image = docker_image.nodeexporter.image_id
 
   ports {
@@ -78,7 +84,7 @@ resource "docker_container" "nodeexporter" {
   }
 
   volumes {
-    volume_name = docker_volume.nodeexporter_data.name
+    volume_name    = docker_volume.nodeexporter_data.name
     container_path = "/metrics"
   }
 }
